@@ -37,7 +37,7 @@ function App() {
   const [selectedTactic, setSelectedTactic] = useState(null);
 
   useEffect(() => {
-    fetch("/fight.yaml")
+    fetch(`${import.meta.env.BASE_URL}fight.yaml`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to load FiGHT YAML");
