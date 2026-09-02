@@ -7,26 +7,70 @@ function renderDescription(description) {
     return "No description available.";
   }
 
-  const parts = description.split(/(\[[^\]]+\]\(https?:\/\/[^)]+\))/g);
+  const citations = [];
 
-  return parts.map((part, index) => {
-    const match = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/);
+  // Remove citation markers and collect them for References
+  const cleanDescription = description
+    .replace(/\(Citation:\s*([^)]+)\)/g, (_, citation) => {
+      citations.push(citation.trim());
+      return "";
+    })
+    .replace(/\r?\n+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // Convert Markdown-style links into clickable links
+  const parts = cleanDescription.split(
+    /(\[[^\]]+\]\(https?:\/\/[^)]+\))/g
+  );
+
+  const content = parts.map((part, index) => {
+    const match = part.match(
+      /^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/
+    );
 
     if (match) {
-      return (
-        <a
-          key={index}
-          href={match[2]}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {match[1]}
-        </a>
-      );
-    }
+  return (
+    <a
+      key={index}
+      href={match[2]}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {match[1]}
+    </a>
+  );
+}
 
     return part;
   });
+
+  return (
+    <>
+      <p className="description-paragraph">
+        {content}
+      </p>
+
+      {citations.length > 0 && (
+        <div className="description-references">
+          <span className="references-title">
+            References
+          </span>
+
+          <div className="references-list">
+            {citations.map((citation, index) => (
+              <span
+                className="reference-item"
+                key={index}
+              >
+                {citation}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
 function App() {
@@ -55,23 +99,23 @@ function App() {
       });
   }, []);
 
- useEffect(() => {
-  const handleKeyDown = (e) => {
-    if (e.key === "Escape") {
-      if (selectedTechnique) {
-        setSelectedTechnique(null);
-      } else if (selectedTactic) {
-        setSelectedTactic(null);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        if (selectedTechnique) {
+          setSelectedTechnique(null);
+        } else if (selectedTactic) {
+          setSelectedTactic(null);
+        }
       }
-    }
-  };
+    };
 
-  document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
 
-  return () => {
-    document.removeEventListener("keydown", handleKeyDown);
-  };
-}, [selectedTechnique, selectedTactic]);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedTechnique, selectedTactic]);
 
   if (error) {
     return <div className="error">Error: {error}</div>;
@@ -121,16 +165,15 @@ function App() {
         <div className="stats">
           <div>
             <strong>{tactics.length}</strong>
-            <span>Tactics</span>
+            <span>tactics</span>
           </div>
 
           <div>
             <strong>{totalTechniques}</strong>
-            <span>Techniques</span>
+            <span>techniques</span>
           </div>
         </div>
       </header>
-
 
       {/* Main Section */}
       <section className="matrix-section">
@@ -139,12 +182,11 @@ function App() {
         <div className="search-box">
           <input
             type="text"
-            placeholder="Search by technique name or ID..."
+            placeholder="search by technique name or ID"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-
 
         {/* Matrix Title */}
         <div className="matrix-title">
@@ -154,7 +196,6 @@ function App() {
             MITRE FiGHT tactics and techniques for 5G telecom security
           </p>
         </div>
-
 
         {/* Matrix */}
         <div className="matrix">
@@ -188,7 +229,6 @@ function App() {
 
                 </div>
 
-
                 {/* Techniques */}
                 <div className="technique-list">
 
@@ -202,29 +242,28 @@ function App() {
                       }
                     >
 
-                      <strong>
-                        {technique.name}
-                      </strong>
-
                       <span>
                         {technique.id}
                       </span>
 
-                      {technique["subtechnique-of"] && (
-                        <small>
-                          Sub-technique
-                        </small>
-                      )}
+                      <div>
+                        <strong>
+                          {technique.name}
+                        </strong>
+
+                        {technique["subtechnique-of"] && (
+                          <small>
+                            sub-technique
+                          </small>
+                        )}
+                      </div>
 
                     </div>
 
                   ))}
 
-
                   {tacticTechniques.length === 0 && (
-                    <div className="empty">
-                      No techniques
-                    </div>
+                    <div className="empty" />
                   )}
 
                 </div>
@@ -235,7 +274,6 @@ function App() {
 
         </div>
       </section>
-
 
       {/* Tactic Popup */}
       {selectedTactic && (
@@ -257,7 +295,6 @@ function App() {
               ×
             </button>
 
-
             <h2>
               {selectedTactic.name}
             </h2>
@@ -267,14 +304,12 @@ function App() {
             </p>
 
             <p className="tactic-modal-label">
-              Tactic
+              tactic
             </p>
-
 
             <h3 className="modal-techniques-title">
               Techniques
             </h3>
-
 
             <div className="modal-technique-list">
 
@@ -294,19 +329,21 @@ function App() {
                     }}
                   >
 
-                    <strong>
-                      {technique.name}
-                    </strong>
-
                     <span>
                       {technique.id}
                     </span>
 
-                    {technique["subtechnique-of"] && (
-                      <small>
-                        Sub-technique
-                      </small>
-                    )}
+                    <div>
+                      <strong>
+                        {technique.name}
+                      </strong>
+
+                      {technique["subtechnique-of"] && (
+                        <small>
+                          sub-technique
+                        </small>
+                      )}
+                    </div>
 
                   </div>
 
@@ -319,7 +356,6 @@ function App() {
         </div>
 
       )}
-
 
       {/* Technique Popup */}
       {selectedTechnique && (
@@ -343,16 +379,13 @@ function App() {
               ×
             </button>
 
-
             <h2>
               {selectedTechnique.name}
             </h2>
 
-
             <p className="technique-id">
               {selectedTechnique.id}
             </p>
-
 
             <p className="technique-tactic">
 
@@ -371,21 +404,22 @@ function App() {
 
             </p>
 
+            {/* Description */}
+            <div className="description-section">
 
-            <p>
-              <strong>
+              <div className="description-heading">
                 Description
-              </strong>
-            </p>
+              </div>
 
+              <div className="description">
+                {renderDescription(
+                  selectedTechnique.description
+                )}
+              </div>
 
-            <p className="description">
-              {renderDescription(
-                selectedTechnique.description
-              )}
-            </p>
+            </div>
 
-
+            {/* Sub-technique Type */}
             {selectedTechnique["subtechnique-of"] && (
               <p>
                 <strong>
