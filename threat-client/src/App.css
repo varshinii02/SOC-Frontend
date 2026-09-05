@@ -1,0 +1,332 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  background: #15161d;
+  color: #f1f1f3;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 30px 0 60px;
+}
+
+
+   /* HEADER */
+
+.header {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  margin: 0 0 20px;
+  font-size: 58px;
+  font-weight: 600;
+  letter-spacing: -1.5px;
+}
+
+/* SEARCH AREA */
+
+.search-container {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 20px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid #3a3c46;
+  border-radius: 8px;
+  background: #1a1b22;
+  padding: 14px 18px;
+  transition: border-color 0.15s ease;
+}
+
+.search-box:focus-within {
+  border-color: #6b6d7a;
+}
+
+.search-prompt {
+  color: #6b6d7a;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 16px;
+  margin-right: 12px;
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #f1f1f3;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 16px;
+  outline: none;
+  padding: 0;
+}
+
+.search-box input::placeholder {
+  color: #6b6d7a;
+}
+
+.search-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.search-actions button {
+  height: 40px;
+  padding: 0 17px;
+  border: 1px solid #555;
+  border-radius: 5px;
+  background: #5f6065;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.search-actions button:hover {
+  background: #73747a;
+  border-color: #777;
+}
+
+/* Search button */
+
+.search-actions button:not(.clear-button) {
+  background: #707178;
+  border-color: #707178;
+}
+
+.search-actions button:not(.clear-button):hover {
+  background: #85868c;
+  border-color: #85868c;
+}
+
+/* Clear button */
+
+.search-actions .clear-button {
+  background: #3d3e44;
+  border-color: #555;
+}
+
+.search-actions .clear-button:hover {
+  background: #505158;
+}
+
+/* ERROR */
+
+.error {
+  width: 100%;
+  margin: 20px 0;
+  text-align: center;
+  color: #aebbd0;
+  font-size: 18px;
+}
+
+/* RESULT */
+
+.result {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* FIGHT TECHNIQUE */
+
+.technique-header {
+  width: 100%;
+  text-align: center;
+  padding: 0 20px 22px;
+}
+
+.technique-header h2 {
+  margin: 0 0 10px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.technique-meta {
+  margin: 6px 0;
+  color: #9eacc0;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+/* DESCRIPTION */
+
+.description {
+  width: 100%;
+  margin: 0;
+  padding: 22px 35px 28px;
+  color: #9eacc0;
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: left;
+  border-bottom: 1px solid #777;
+}
+
+.description strong {
+  color: #f1f1f3;
+}
+
+/* COMMON SECTIONS */
+
+.section {
+  width: 100%;
+  margin: 0;
+  padding: 26px 35px 30px;
+  border-bottom: 1px solid #777;
+}
+
+.section-title {
+  width: 100%;
+  margin: 0 0 22px;
+  text-align: center;
+  font-size: 27px;
+  font-weight: 600;
+  color: #f1f1f3;
+}
+
+.section-content {
+  width: 100%;
+  margin: 0;
+  color: #9eacc0;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+/* MITRE */
+
+.mitre-id {
+  margin: 0 0 18px;
+  text-align: center;
+}
+
+.mitre-id strong {
+  color: #f1f1f3;
+}
+
+.mitre-name {
+  margin: 0 0 15px;
+  text-align: center;
+  font-size: 22px;
+  color: #b8c2d2;
+}
+
+.mitre-description {
+  margin: 0 0 20px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.mitre-link-container {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.mitre-link {
+  color: #b8c7dc;
+  text-decoration: underline;
+  font-size: 16px;
+}
+
+.mitre-link:hover {
+  color: white;
+}
+
+/* MITIGATIONS / DETECTIONS */
+
+.item {
+  width: 100%;
+  margin: 0 0 25px;
+  padding: 0 0 22px;
+  border-bottom: 1px solid #333;
+}
+
+.item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.item-id {
+  margin: 0 0 7px;
+  font-size: 18px;
+  color: #b8c2d2;
+}
+
+.item-name {
+  margin: 0 0 10px;
+  font-size: 21px;
+  color: #f1f1f3;
+}
+
+.item-description {
+  margin: 0;
+  color: #9eacc0;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* Empty messages */
+
+.empty-message {
+  margin: 0;
+  text-align: center;
+  color: #9eacc0;
+  font-size: 18px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .app {
+    padding-top: 25px;
+  }
+
+  .header h1 {
+    font-size: 46px;
+  }
+
+  .search-container {
+    padding: 0 16px;
+  }
+
+  .description,
+  .section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .section-title {
+    font-size: 24px;
+  }
+
+  .description,
+  .section-content {
+    font-size: 16px;
+  }
+}
