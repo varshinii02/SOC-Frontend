@@ -1230,3 +1230,189 @@ input {
     right: 10px;
   }
 }
+
+.attack-loading,
+.attack-error {
+  margin-top: 24px;
+  padding: 12px 14px;
+  background: rgba(227, 232, 235, 0.035);
+  border-left: 2px solid rgba(227, 232, 235, 0.25);
+
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.attack-error {
+  border-left-color: var(--danger);
+  color: var(--danger);
+}
+
+.attack-section {
+  margin-top: 28px;
+}
+
+.attack-heading {
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+
+  border-bottom: 1px solid rgba(227, 232, 235, 0.14);
+
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  text-align: left;
+}
+
+.attack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attack-card {
+  padding: 14px 15px;
+
+  background: rgba(227, 232, 235, 0.035);
+  border: 1px solid rgba(227, 232, 235, 0.08);
+  border-left: 2px solid rgba(227, 232, 235, 0.20);
+}
+
+.attack-id {
+  margin-bottom: 6px;
+
+  color: var(--heading);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.attack-card strong {
+  display: block;
+
+  color: var(--heading);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.attack-card p {
+  margin: 8px 0 0;
+
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.attack-card a {
+  display: inline-block;
+  margin-top: 10px;
+
+  color: var(--heading);
+  font-family: var(--font-mono);
+  font-size: 10px;
+
+  text-decoration: none;
+  border-bottom: 1px solid rgba(227, 232, 235, 0.30);
+}
+
+.attack-card a:hover {
+  border-bottom-color: var(--heading);
+}
+
+.attack-empty {
+  padding: 12px 14px;
+
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+
+  background: rgba(227, 232, 235, 0.025);
+  border-left: 2px solid rgba(227, 232, 235, 0.15);
+}
+
+.attack-section {
+  margin-top: 28px;
+}
+
+.attack-heading {
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(227, 232, 235, 0.14);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+}
+
+.attack-card {
+  padding: 15px 16px;
+  margin-bottom: 9px;
+  background: rgba(227, 232, 235, 0.035);
+  border-left: 2px solid rgba(227, 232, 235, 0.18);
+}
+
+.attack-id {
+  margin-bottom: 6px;
+  color: var(--heading);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.attack-card strong {
+  display: block;
+  color: var(--heading);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.attack-card p {
+  margin: 9px 0 0;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.attack-card a {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--heading);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(227, 232, 235, 0.3);
+}
+
+.attack-card a:hover {
+  border-bottom-color: var(--heading);
+}
+
+.attack-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.attack-loading,
+.attack-error,
+.attack-empty {
+  margin-top: 20px;
+  padding: 12px 14px;
+  background: rgba(227, 232, 235, 0.035);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.attack-error {
+  color: var(--danger);
+}

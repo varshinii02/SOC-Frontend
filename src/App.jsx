@@ -74,11 +74,15 @@ function renderDescription(description) {
 }
 
 function App() {
-  const [fightData, setFightData] = useState(null);
-  const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
-  const [selectedTechnique, setSelectedTechnique] = useState(null);
-  const [selectedTactic, setSelectedTactic] = useState(null);
+const [fightData, setFightData] = useState(null);
+const [error, setError] = useState("");
+const [search, setSearch] = useState("");
+const [selectedTechnique, setSelectedTechnique] = useState(null);
+const [selectedTactic, setSelectedTactic] = useState(null);
+
+const [attackData, setAttackData] = useState(null);
+const [attackLoading, setAttackLoading] = useState(false);
+const [attackError, setAttackError] = useState("");
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}fight.yaml`)
@@ -98,6 +102,36 @@ function App() {
         setError(error.message);
       });
   }, []);
+
+  useEffect(() => {
+  if (!selectedTechnique) {
+    setAttackData(null);
+    return;
+  }
+
+  setAttackLoading(true);
+  setAttackError("");
+
+  fetch(`http://localhost:3001/api/attack/${selectedTechnique.id}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to load MITRE ATT&CK data");
+      }
+
+      return response.json();
+    })
+    .then((data) => {
+      setAttackData(data);
+    })
+    .catch((error) => {
+      console.error(error);
+      setAttackError(error.message);
+      setAttackData(null);
+    })
+    .finally(() => {
+      setAttackLoading(false);
+    });
+}, [selectedTechnique]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -325,8 +359,9 @@ function App() {
                     className="modal-technique-card"
                     key={technique.id}
                     onClick={() => {
-                      setSelectedTechnique(technique);
-                    }}
+  setSelectedTactic(null);
+  setSelectedTechnique(technique);
+}}
                   >
 
                     <span>
@@ -418,6 +453,130 @@ function App() {
               </div>
 
             </div>
+
+            {/* MITRE ATT&CK Information */}
+{attackLoading && (
+  <div className="attack-loading">
+    Loading MITRE ATT&CK information...
+  </div>
+)}
+
+{attackError && (
+  <div className="attack-error">
+    {attackError}
+  </div>
+)}
+
+{attackData && (
+  <>
+    {/* MITRE ATT&CK */}
+<div className="attack-section">
+  <div className="attack-heading">
+    MITRE ATT&CK
+  </div>
+
+  {attackData.mitreMappingAvailable ? (
+    <div className="attack-card">
+      <div className="attack-id">
+        {attackData.mitreId}
+      </div>
+
+      <strong>
+        {attackData.mitre?.name}
+      </strong>
+
+      <div className="description">
+  {renderDescription(attackData.mitre?.description)}
+</div>
+
+      {attackData.mitre?.url && (
+        <a
+          href={attackData.mitre.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View MITRE ATT&CK
+        </a>
+      )}
+    </div>
+  ) : (
+    <div className="attack-empty">
+      MITRE mapping unavailable for this technique.
+    </div>
+  )}
+</div>
+
+    {/* Mitigations */}
+    <div className="attack-section">
+      <div className="attack-heading">
+        Mitigations
+      </div>
+
+      {attackData.mitigations?.length > 0 ? (
+        <div className="attack-list">
+          {attackData.mitigations.map((mitigation) => (
+            <div
+              className="attack-card"
+              key={mitigation.id}
+            >
+              <div className="attack-id">
+                {mitigation.id}
+              </div>
+
+              <strong>
+                {mitigation.name}
+              </strong>
+
+              <div className="description">
+  {renderDescription(mitigation.description)}
+</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="attack-empty">
+          No mitigations available.
+        </div>
+      )}
+    </div>
+
+    {/* Detections */}
+    <div className="attack-section">
+      <div className="attack-heading">
+        Detection
+      </div>
+
+      {attackData.detections?.length > 0 ? (
+        <div className="attack-list">
+          {attackData.detections.map((detection) => (
+            <div
+              className="attack-card"
+              key={detection.id}
+            >
+              <div className="attack-id">
+                {detection.id}
+              </div>
+
+              <strong>
+                {detection.name}
+              </strong>
+
+              <div className="description">
+  {renderDescription(
+    detection.description || "No description available."
+  )}
+</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="attack-empty">
+          No detection strategies available.
+        </div>
+      )}
+    </div>
+  </>
+)}
 
             {/* Sub-technique Type */}
             {selectedTechnique["subtechnique-of"] && (
