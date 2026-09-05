@@ -188,13 +188,51 @@ app.get("/api/attack/:id", async (req, res) => {
 
     // Find FiGHT technique
 
-    const technique =
-      (fightData.techniques || []).find(
-        (item) =>
-          item["object-type"] === "technique" &&
-          item.id?.toLowerCase() ===
-            attackId.toLowerCase()
-      );
+const searchTerm = attackId
+  .trim()
+  .toLowerCase()
+  .replace(/\s+/g, " ");
+
+const technique =
+  (fightData.techniques || []).find((item) => {
+
+    const itemId = String(item.id || "")
+      .trim()
+      .toLowerCase();
+
+    const itemName = String(item.name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+
+    return (
+      item["object-type"] === "technique" &&
+      (
+        itemId === searchTerm ||
+        itemName === searchTerm
+      )
+    );
+  });
+
+  console.log("SEARCH:", JSON.stringify(attackId));
+console.log(
+  "MATCH:",
+  technique
+    ? {
+        id: technique.id,
+        name: technique.name
+      }
+    : "NOT FOUND"
+);
+
+  const debugTechnique =
+  (fightData.techniques || []).find(
+    (item) =>
+      item["object-type"] === "technique" &&
+      item.id?.toLowerCase() === searchTerm
+  );
+
+console.log("DEBUG TECHNIQUE:", debugTechnique);
 
     if (!technique) {
 
@@ -213,7 +251,7 @@ function deriveMitreId(fightId) {
 
 }
 
-const mitreId = deriveMitreId(attackId);
+const mitreId = deriveMitreId(technique.id);
 const mitreIdSource = "direct";
 
 if (!mitreId) {
