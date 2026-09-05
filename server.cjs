@@ -540,13 +540,17 @@ mitre: {
 
 // Start server
 
-app.listen(
-  PORT,
-  () => {
+// Serve React frontend
+const distPath = path.join(__dirname, "dist");
 
-    console.log(
-      `Threat server running at http://localhost:${PORT}`
-    );
+app.use(express.static(distPath));
 
-  }
-);
+// React fallback
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Threat server running on port ${PORT}`);
+});
