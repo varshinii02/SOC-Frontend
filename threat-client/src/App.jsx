@@ -1,4 +1,95 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import "./App.css";
+
+function formatMarkdown(text) {
+  if (!text) return "";
+
+  return text
+    // Put citations on their own line
+    .replace(/\s*\(Citation:\s*/g, "\n\n**Citation:** ")
+    .replace(/\)(?=\s*\n\n\*\*Citation:\*\*)/g, "")
+    // Clean up excessive blank lines
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function MarkdownText({ children }) {
+  const formattedText = (children || "")
+    .replace(/\n\s*\n(?=\(Citation:)/g, " ")
+    .replace(/\)\s*\n\s*\(Citation:/g, ")(Citation:");
+
+  return (
+    <ReactMarkdown
+      components={{
+        a: ({ node, ...props }) => (
+          <a
+            {...props}
+            target="_blank"
+            rel="noopener noreferrer"
+          />
+        ),
+
+        p: ({ children }) => (
+          <p className="markdown-paragraph">
+            {children}
+          </p>
+        ),
+
+        ul: ({ children }) => (
+          <ul className="markdown-list">
+            {children}
+          </ul>
+        ),
+
+        ol: ({ children }) => (
+          <ol className="markdown-list">
+            {children}
+          </ol>
+        ),
+
+        li: ({ children }) => (
+          <li>{children}</li>
+        ),
+
+        strong: ({ children }) => (
+          <strong className="markdown-strong">
+            {children}
+          </strong>
+        ),
+
+        em: ({ children }) => (
+          <em>{children}</em>
+        ),
+
+        code: ({ children, className, ...props }) => {
+          const isInline = !className;
+
+          if (isInline) {
+            return (
+              <code
+                className="inline-code"
+                {...props}
+              >
+                {children}
+              </code>
+            );
+          }
+
+          return (
+            <pre className="code-block">
+              <code className={className} {...props}>
+                {children}
+              </code>
+            </pre>
+          );
+        }
+      }}
+    >
+      {formattedText}
+    </ReactMarkdown>
+  );
+}
 
 function App() {
   const [attackId, setAttackId] = useState("");
@@ -6,226 +97,290 @@ function App() {
   const [error, setError] = useState("");
 
   const handleSearch = async () => {
-    if (!attackId.trim()) {
-  setResult(null);
-  setError("Please enter a FiGHT Technique ID");
-  return;
-}
-
-    setError("");
+  if (!attackId.trim()) {
     setResult(null);
+    setError("Please enter a FiGHT Technique ID");
+    return;
+  }
 
-    try {
-      const response = await fetch(
-        `http://localhost:3001/api/attack/${attackId.trim()}`
-      );
+  setError("");
+  setResult(null);
 
-      const data = await response.json();
+  try {
+    const response = await fetch(
+      `https://soc-threat-backend.onrender.com/api/attack/${encodeURIComponent(
+        attackId.trim()
+      )}`
+    );
 
-      if (!response.ok) {
-        throw new Error(data.error || "Attack not found");
-      }
+    const data = await response.json();
 
-      setResult(data);
-    } catch (error) {
-      setError(error.message);
+    if (!response.ok) {
+      throw new Error(data.error || "Attack not found");
     }
+
+    setResult(data);
+  } catch (error) {
+    setError(error.message || "Failed to fetch");
+  }
+};
+
+  const handleClear = () => {
+    setResult(null);
+    setError("");
+    setAttackId("");
   };
 
   return (
-  <div className="app">
+    <div className="app">
 
-    <div className="header">
-      <h1>Threat Client</h1>
+      {/* HEADER */}
+      <div className="header">
+        <h1>Threat Client</h1>
 
-      <div className="search-container">
+        <div className="search-container">
 
-        <input
-  type="text"
-  placeholder="Search by technique name or ID"
-  value={attackId}
-  onChange={(e) => setAttackId(e.target.value)}
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  }}
-/>
+          <div className="search-box">
+            <span className="search-prompt">&gt;</span>
 
-        <button onClick={handleSearch}>
-          Search
-        </button>
+            <input
+              type="text"
+              placeholder="Search by technique name or ID"
+              value={attackId}
+              onChange={(e) =>
+                setAttackId(e.target.value)
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+            />
+          </div>
 
-        <button
-          className="clear-button"
-          onClick={() => {
-            setResult(null);
-            setError("");
-            setAttackId("");
-          }}
-        >
-          Clear
-        </button>
+          <div className="search-actions">
+            <button onClick={handleSearch}>
+              Search
+            </button>
 
+            <button
+              className="clear-button"
+              onClick={handleClear}
+            >
+              Clear
+            </button>
+          </div>
+
+        </div>
       </div>
-    </div>
 
-    {error && (
-      <p className="error">
-        {error}
-      </p>
-    )}
+      {/* ERROR */}
+      {error && (
+        <p className="error">
+          {error}
+        </p>
+      )}
 
-    {result && (
-      <div className="result">
+      {/* RESULT */}
+      {result && (
+        <div className="result">
 
-        {/* FiGHT TECHNIQUE */}
+          {/* FiGHT TECHNIQUE */}
+          <div className="technique-header">
 
-        <div className="technique-header">
-          <h2>{result.name}</h2>
+            <h2>{result.name}</h2>
 
-          <p className="technique-meta">
-            <strong>ID:</strong> {result.id}
-          </p>
+            <p className="technique-meta">
+              <strong>ID:</strong>{" "}
+              {result.id}
+            </p>
 
-          <p className="technique-meta">
-            <strong>Tactics:</strong>{" "}
-            {result.tactics?.join(", ") || "Not specified"}
-          </p>
-        </div>
+            <p className="technique-meta">
+              <strong>Tactics:</strong>{" "}
+              {result.tactics?.join(", ") ||
+                "Not specified"}
+            </p>
 
-        {/* DESCRIPTION */}
+          </div>
 
-        <div className="description">
-          <strong>Description:</strong>{" "}
-          {result.description || "No description available."}
-        </div>
+          {/* FIGHT DESCRIPTION */}
+          <section className="description">
 
-        {/* MITRE */}
+            <div className="description-label">
+              Description
+            </div>
 
-        <section className="section">
-          <h2 className="section-title">
-            MITRE ATT&CK
-          </h2>
+            <div className="markdown-content">
+              <MarkdownText>
+                {result.description ||
+                  "No description available."}
+              </MarkdownText>
+            </div>
 
-          <div className="section-content">
+          </section>
 
-            {result.mitreMappingAvailable && result.mitre ? (
-              <>
-                <p className="mitre-id">
-                  <strong>MITRE ID:</strong>{" "}
-                  {result.mitreId}
-                </p>
+          {/* MITRE ATT&CK */}
+          <section className="section">
 
-                <h3 className="mitre-name">
-                  {result.mitre.name}
-                </h3>
+            <h2 className="section-title">
+              MITRE ATT&CK
+            </h2>
 
-                <p className="mitre-description">
-                  {result.mitre.description}
-                </p>
+            <div className="section-content">
 
-                {result.mitre.url && (
-                  <div className="mitre-link-container">
-                    <a
-                      className="mitre-link"
-                      href={result.mitre.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View MITRE ATT&CK
-                    </a>
+              {result.mitreMappingAvailable &&
+              result.mitre ? (
+                <>
+
+                  <p className="mitre-id">
+                    <strong>MITRE ID:</strong>{" "}
+                    {result.mitreId}
+                  </p>
+
+                  <h3 className="mitre-name">
+                    {result.mitre.name}
+                  </h3>
+
+                  <div className="mitre-description markdown-content">
+                    <MarkdownText>
+                      {result.mitre.description ||
+                        "No description available."}
+                    </MarkdownText>
                   </div>
-                )}
-              </>
-            ) : (
-              <p className="empty-message">
-                MITRE mapping unavailable for this technique.
-              </p>
-            )}
 
-          </div>
-        </section>
+                  {result.mitre.url && (
+                    <div className="mitre-link-container">
+                      <a
+                        className="mitre-link"
+                        href={result.mitre.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View MITRE ATT&CK
+                      </a>
+                    </div>
+                  )}
 
-        {/* MITIGATIONS */}
+                </>
+              ) : (
+                <p className="empty-message">
+                  MITRE mapping unavailable for this
+                  technique.
+                </p>
+              )}
 
-        <section className="section">
-          <h2 className="section-title">
-            Mitigations
-          </h2>
+            </div>
 
-          <div className="section-content">
+          </section>
 
-            {result.mitigations?.length > 0 ? (
-              result.mitigations.map((mitigation) => (
-                <div
-                  className="item"
-                  key={mitigation.id}
-                >
-                  <h3 className="item-id">
-                    {mitigation.id}
-                  </h3>
+          {/* MITIGATIONS */}
+          <section className="section">
 
-                  <h4 className="item-name">
-                    {mitigation.name}
-                  </h4>
+            <h2 className="section-title">
+              Mitigations
+            </h2>
 
-                  <p className="item-description">
-                    {mitigation.description ||
-                      "No description available."}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="empty-message">
-                No mitigations available.
-              </p>
-            )}
+            <div className="section-content">
 
-          </div>
-        </section>
+              {result.mitigations?.length > 0 ? (
 
-        {/* DETECTION */}
+                result.mitigations.map(
+                  (mitigation) => (
+                    <div
+                      className="item"
+                      key={
+                        mitigation.id ||
+                        mitigation.name
+                      }
+                    >
 
-        <section className="section">
-          <h2 className="section-title">
-            Detection
-          </h2>
+                      <h3 className="item-id">
+                        {mitigation.id}
+                      </h3>
 
-          <div className="section-content">
+                      <h4 className="item-name">
+                        {mitigation.name}
+                      </h4>
 
-            {result.detections?.length > 0 ? (
-              result.detections.map((detection) => (
-                <div
-                  className="item"
-                  key={detection.id}
-                >
-                  <h3 className="item-id">
-                    {detection.id}
-                  </h3>
+                      <div className="item-description markdown-content">
+                        <MarkdownText>
+                          {mitigation.description ||
+                            "No description available."}
+                        </MarkdownText>
+                      </div>
 
-                  <h4 className="item-name">
-                    {detection.name}
-                  </h4>
+                    </div>
+                  )
+                )
 
-                  <p className="item-description">
-                    {detection.description ||
-                      "No description available."}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="empty-message">
-                No detection strategies available.
-              </p>
-            )}
+              ) : (
 
-          </div>
-                </section>
+                <p className="empty-message">
+                  No mitigations available.
+                </p>
 
-      </div>
-    )}
-  </div>
+              )}
+
+            </div>
+
+          </section>
+
+          {/* DETECTIONS */}
+          <section className="section">
+
+            <h2 className="section-title">
+              Detection
+            </h2>
+
+            <div className="section-content">
+
+              {result.detections?.length > 0 ? (
+
+                result.detections.map(
+                  (detection) => (
+                    <div
+                      className="item"
+                      key={
+                        detection.id ||
+                        detection.name
+                      }
+                    >
+
+                      <h3 className="item-id">
+                        {detection.id}
+                      </h3>
+
+                      <h4 className="item-name">
+                        {detection.name}
+                      </h4>
+
+                      <div className="item-description markdown-content">
+                        <MarkdownText>
+                          {detection.description ||
+                            "No description available."}
+                        </MarkdownText>
+                      </div>
+
+                    </div>
+                  )
+                )
+
+              ) : (
+
+                <p className="empty-message">
+                  No detection strategies available.
+                </p>
+
+              )}
+
+            </div>
+
+          </section>
+
+        </div>
+      )}
+
+    </div>
   );
 }
 

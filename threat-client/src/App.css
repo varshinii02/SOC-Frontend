@@ -330,3 +330,126 @@ body {
     font-size: 16px;
   }
 }
+
+/* =========================================================
+   MARKDOWN CONTENT
+   ========================================================= */
+
+.markdown-content {
+  width: 100%;
+}
+
+.markdown-paragraph {
+  margin: 0 0 16px;
+  line-height: 1.7;
+}
+
+.markdown-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-content a {
+  color: #b8c7dc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.markdown-content a:hover {
+  color: #ffffff;
+}
+
+.markdown-list {
+  margin: 12px 0 18px;
+  padding-left: 28px;
+}
+
+.markdown-list li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.markdown-strong {
+  color: #f1f1f3;
+  font-weight: 600;
+}
+
+.inline-code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #202129;
+  border: 1px solid #343640;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.9em;
+}
+
+.code-block {
+  overflow-x: auto;
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid #343640;
+  border-radius: 6px;
+  background: #1a1b22;
+}
+
+.code-block code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* DESCRIPTION= */
+
+.description-label {
+  margin-bottom: 12px;
+  color: #f1f1f3;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+
+/* SECTION CONTENT */
+
+.mitre-description,
+.item-description {
+  line-height: 1.7;
+}
+
+.mitre-description .markdown-paragraph,
+.item-description .markdown-paragraph {
+  margin-bottom: 16px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+  .markdown-paragraph {
+    line-height: 1.6;
+  }
+
+  .markdown-list {
+    padding-left: 22px;
+  }
+
+  .code-block {
+    font-size: 13px;
+  }
+
+}
+
+/* CITATIONS */
+
+.markdown-content {
+  max-width: 100%;
+}
+
+.markdown-content p {
+  margin-bottom: 18px;
+}
+
+.markdown-content p:last-child {
+  margin-bottom: 0;
+}
