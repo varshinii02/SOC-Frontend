@@ -27,6 +27,170 @@ const yamlText = fs.readFileSync(
 
 const fightData = yaml.load(yamlText);
 
+// Temporary data for testing POST
+const customTechniques = [];
+
+// PRACTICE API
+app.get("/api/techniques/:id", (req, res) => {
+
+  console.log("NEW API CALLED:", req.params.id);
+
+  const techniqueId = req.params.id.toLowerCase();
+
+  // First search the FiGHT YAML data
+  let technique = (fightData.techniques || []).find(
+    (item) =>
+      item["object-type"] === "technique" &&
+      String(item.id).toLowerCase() === techniqueId
+  );
+
+  // If not found in YAML, search POST-created data
+  if (!technique) {
+    technique = customTechniques.find(
+      (item) =>
+        String(item.id).toLowerCase() === techniqueId
+    );
+  }
+
+  if (!technique) {
+    return res.status(404).json({
+      error: "Technique not found"
+    });
+  }
+
+  res.json(technique);
+
+});
+
+// get
+app.get("/api/mitigations/:id", (req, res) => {
+
+  console.log("MITIGATION API CALLED:", req.params.id);
+
+  const mitigationId = req.params.id.toLowerCase();
+
+  const mitigation = (fightData.mitigations || []).find(
+    (item) =>
+      item["object-type"] === "mitigation" &&
+      String(item.id).toLowerCase() === mitigationId
+  );
+
+  if (!mitigation) {
+    return res.status(404).json({
+      error: "Mitigation not found"
+    });
+  }
+
+  res.json(mitigation);
+
+});
+
+//post
+app.post("/api/techniques", express.json(), (req, res) => {
+
+  const newTechnique = req.body;
+
+  if (!newTechnique.id || !newTechnique.name) {
+    return res.status(400).json({
+      error: "id and name are required"
+    });
+  }
+
+  customTechniques.push(newTechnique);
+
+  res.status(201).json({
+    message: "Technique created successfully",
+    technique: newTechnique
+  });
+
+});
+
+// PATCH
+
+app.patch("/api/techniques/:id", express.json(), (req, res) => {
+
+  const techniqueId = req.params.id.toLowerCase();
+
+  const technique = customTechniques.find(
+    (item) =>
+      String(item.id).toLowerCase() === techniqueId
+  );
+
+  if (!technique) {
+    return res.status(404).json({
+      error: "Technique not found"
+    });
+  }
+
+  Object.assign(technique, req.body);
+
+  res.json({
+    message: "Technique updated successfully",
+    technique: technique
+  });
+
+});
+
+// PUT
+
+app.put("/api/techniques/:id", express.json(), (req, res) => {
+
+  const techniqueId = req.params.id.toLowerCase();
+
+  const index = customTechniques.findIndex(
+    (item) =>
+      String(item.id).toLowerCase() === techniqueId
+  );
+
+  if (index === -1) {
+    return res.status(404).json({
+      error: "Technique not found"
+    });
+  }
+
+  const replacement = req.body;
+
+  if (!replacement.id || !replacement.name || !replacement.description) {
+    return res.status(400).json({
+      error: "id, name and description are required"
+    });
+  }
+
+  customTechniques[index] = replacement;
+
+  res.json({
+    message: "Technique replaced successfully",
+    technique: replacement
+  });
+
+});
+
+// DELETE
+
+app.delete("/api/techniques/:id", (req, res) => {
+
+  const techniqueId = req.params.id.toLowerCase();
+
+  const index = customTechniques.findIndex(
+    (item) =>
+      String(item.id).toLowerCase() === techniqueId
+  );
+
+  if (index === -1) {
+    return res.status(404).json({
+      error: "Technique not found"
+    });
+  }
+
+  const deletedTechnique = customTechniques.splice(index, 1);
+
+  res.json({
+    message: "Technique deleted successfully",
+    technique: deletedTechnique[0]
+  });
+
+});
+
 // MITRE ATT&CK TAXII API
 
 const MITRE_API =

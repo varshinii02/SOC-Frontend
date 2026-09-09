@@ -112,7 +112,9 @@ const [attackError, setAttackError] = useState("");
   setAttackLoading(true);
   setAttackError("");
 
-  fetch(`http://localhost:3001/api/attack/${selectedTechnique.id}`)
+  fetch(
+    `https://soc-threat-backend.onrender.com/api/attack/${selectedTechnique.id}`
+  )
     .then((response) => {
       if (!response.ok) {
         throw new Error("Failed to load MITRE ATT&CK data");
